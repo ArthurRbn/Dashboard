@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  client:
+    build: ./client/
+    restart: always
+    ports:
+      - "8081:8081"
+
+  server:
+    build: ./server/
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "mongo"
+    environment:
+      STEAM_API_KEY: ${STEAM_API_KEY:-none}
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY:-none}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-none}
+      URL_MONGO: "mongodb://${MONGO_INITDB_ROOT_USERNAME:-none}:${MONGO_INITDB_ROOT_PASSWORD:-none}@mongo:27017"
+      REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID:-none}
+      REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET:-none}
+      REDDIT_OAUTH_CALLBACK: ${REDDIT_OAUTH_CALLBACK:-http://localhost:8081/oauth_callback}
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID:-none}
+      TWITCH_CLIENT_SECRET: ${TWITCH_CLIENT_SECRET:-none}
+      TWITCH_OAUTH_CALLBACK: ${TWITCH_OAUTH_CALLBACK:-http://localhost:8081/twitch_oauth_callback}
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:8080/api}
+
+  mongo:
+    image: mongo:4.0
+    restart: always
+    ports: 
+      - "27017:27017"
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-user}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
